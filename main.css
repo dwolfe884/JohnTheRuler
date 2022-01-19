@@ -1,0 +1,22 @@
+h2 {
+    color: navy;
+    margin-left: 20px;
+}
+.inline-div {
+    display:inline-block;
+    text-align: center;
+    padding: 50px;
+}
+.inline-txtarea {
+    resize: none;
+    border : 2px solid red;
+    height:500px;
+    width: 200px;
+}
+.center-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 100vh;
+  }

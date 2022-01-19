@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<link rel="stylesheet" href="main.css">
+</head>
+<div class="center-screen">
+    <div class="inline-div">
+    <h2>Input</h2>
+    <textarea id="input" name="input" rows="20" cols="10" class="inline-txtarea">password</textarea>
+    </div>
+    <div class="inline-div">
+    <h2>JTR Rule</h2>
+    <textarea id="rule" name="rule" rows="10" cols="10" class="inline-txtarea">[List.Rules:jtestcom]
+u
+cAz"[0-9][0-9]"</textarea>
+    </div>
+    <div class="inline-div">
+    <h2>Output</h2>
+    <textarea id="output" name="output" rows="20" cols="10" class="inline-txtarea"></textarea>
+    </div>
+</div>
+</html>
+<script>
+    var inlist = document.getElementById('input').value;
+    //console.log(inlist)
+    
+
+const selectElement = document.getElementById('input');
+
+selectElement.addEventListener('change', (event) => {
+  //console.log("Changed")
+  updateRule()
+  selectElement.value = selectElement.value.split(' ').join('\n');
+});
+
+const ruleElement = document.getElementById('rule');
+
+ruleElement.addEventListener('change', (event) => {
+  updateRule();
+});
+window.onload = updateRule();
+
+function recurse(arr,inside){
+    var done = false;
+    //inside = "[9-0][0-9]"
+    //each call strip off one of the [] pairs
+    var tmp = [];
+    if(inside == ""){
+        return arr;
+    }
+    if(inside.indexOf("[") == -1){
+        for(var i=0; i<arr.length; i++){
+            tmp.push(arr[i] + inside);
+        }
+        splits = [];
+        done = true;
+        //recurse(tmp,"");
+    }
+    if(!done){
+        var splits = inside.split(/[\[\]]+/);
+        var first = true;
+        var location = 0;
+        var indiv = splits[1];
+        var start = indiv.charCodeAt(0);
+        var end = indiv.charCodeAt(2);
+        if(arr.length == 0){
+            if(start < end){
+                while(start <= end){
+                    tmp.push(splits[0] + String.fromCharCode(start));
+                    start+=1;
+                }           
+            }
+            else{
+                while(start >= end){
+                    tmp.push(splits[0] + String.fromCharCode(start));
+                    start-=1;
+                }
+            }
+            splits.splice(0,2);
+            //recurse(tmp,splits.join(""));
+        }
+        else{
+            for(var i=0; i<arr.length; i++){
+                start = indiv.charCodeAt(0);
+                end = indiv.charCodeAt(2);
+                if(start < end){
+                    while(start <= end){
+                        tmp.push(arr[i] + String.fromCharCode(start));
+                        start+=1;
+                    }           
+                }
+                else{
+                    while(start >= end){
+                        tmp.push(arr[i] + String.fromCharCode(start));
+                        start-=1;
+                    }
+                }
+                
+                splits.splice(0,1);
+                //recurse(tmp,splits.join(""));
+            }
+        }
+    }
+    console.log("original: ");
+    console.log(inside);
+    console.log("curr arr:");
+    console.log(tmp);
+    console.log("still to process:");
+    console.log(inside.substring(inside.indexOf("]")+1,inside.length));
+    return recurse(tmp, inside.substring(inside.indexOf("]")+1,inside.length));
+}
+
+function updateRule(){
+    const output = document.getElementById("output")
+    output.value = ""
+    const ruleValue = document.getElementById('rule').value.split("\n");
+    for(var i=1; i<ruleValue.length; i++){
+        var rule = ruleValue[i]
+        output.value += ("-----"+rule+"-----\n");
+        const wordValue = document.getElementById('input').value.split("\n");
+        for(var j=0; j<wordValue.length; j++){
+            var failed = false;
+            var reason = "";
+            var word = wordValue[j];
+            var skip = false;
+            if(word != ""){
+                var parsingQ = true;
+                while(parsingQ){ 
+                    var tmp = rule.indexOf("?");
+                    //If there is a ? in the rule
+                    if(tmp != -1){
+                        //TODO: Do work on ? cases
+                        rule = rule.substring(0,tmp-1) + rule.substring(tmp+1,rule.length);
+                        //console.log(rule)
+                    }
+                    else{
+                        parsingQ = false;
+                    }
+                }
+                //Done Parsing ?'s
+                //Check for u = convert to uppercase
+                if(rule.indexOf("u") != -1){
+                    word = word.toUpperCase();
+                }
+                //Check for l = convert to lowercase
+                if(rule.indexOf("l") != -1){
+                    word = word.toLowerCase();
+                }
+                //Check for c = capitalize first letter
+                if(rule.indexOf("c") != -1){
+                    word = word.charAt(0).toUpperCase() + word.slice(1);
+                }
+                //Check for A = Append at specific 
+                if(rule.indexOf("A") != -1){
+                    var tmp = rule.indexOf("A");
+                    var where = rule.charAt(tmp+1);
+                    if(where == "0"){
+                        //word = ;
+                    }
+                    else if(where == "z"){
+                        if(rule.charAt(tmp+2) != "\"" && rule.charAt(tmp+2) != "\'"){
+                            failed = true;
+                            reason = "Missing quotes for append";
+                        }
+                        else{
+                            var toAdd = rule.substring(tmp+2).split(/[\"\']+/)[1]
+                            if(toAdd.indexOf("[") != -1 && toAdd.indexOf("]") != -1){
+                                var allCombos = recurse([],toAdd);
+                                console.log("Final array:")
+                                console.log(allCombos);
+                                var splits = toAdd.split("]");
+                                for(var i=0; i<allCombos.length; i++){
+                                    output.value += word + allCombos[i] + splits[splits.length-1] + "\n";
+                                    skip = true;
+                                }
+                            }
+                            else{
+                                word = word + rule.substring(tmp+2).split("\"")[1];
+                            }
+                        }
+                    }
+                    else{
+
+                    }
+                }
+                //console.log(word);
+                if(!failed && !skip){
+                    output.value += word+"\n";
+                }
+                else if(failed){
+                    output.value += reason+"\n";
+                }
+                else if(skip){
+                    output.value += "\n";
+                }
+            }
+        }
+    }
+}
+
+</script>
