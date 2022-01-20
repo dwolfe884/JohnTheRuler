@@ -7,28 +7,12 @@
 <div class="center-screen">
     <div class="inline-div">
     <h2>Input</h2>
-    <textarea id="input" name="input" rows="20" cols="10" class="inline-txtarea">123456
-12345
-123456789
-password
-iloveyou
-princess
-1234567
-rockyou
-12345678
-abc123
-nicole
-daniel
-babygirl
-monkey
-lovely
-jessica</textarea>
+    <textarea id="input" name="input" rows="20" cols="10" class="inline-txtarea">jessica</textarea>
     </div>
     <div class="inline-div">
     <h2>JTR Rule</h2>
     <textarea id="rule" name="rule" rows="10" cols="10" class="inline-txtarea">[List.Rules:jtestcom]
-u
-cAz"[0-9][0-9]"</textarea>
+cAz"[A-B0-1][0-1]"</textarea>
     </div>
     <div class="inline-div">
     <h2>Output</h2>
@@ -76,7 +60,7 @@ window.onload = updateRule();
 
 function recurse(arr,inside){
     var done = false;
-    //inside = "[9-0][0-9]"
+    //inside = "[9-0A-Z][0-9]"
     //each call strip off one of the [] pairs
     var tmp = [];
     if(inside == ""){
@@ -93,48 +77,84 @@ function recurse(arr,inside){
     }
     if(!done){
         var splits = inside.split(/[\[\]]+/);
-        var first = true;
-        var location = 0;
         var indiv = splits[1];
-        var start = indiv.charCodeAt(0);
-        var end = indiv.charCodeAt(2);
+        //var first = true;
+        //var location = 0;
+        //while(indiv.indexOf("-") != -1){
+
+        //    var currIndex = indiv.indexOf("-")
+        //    var start = indiv.charCodeAt(currIndex-1);
+        //    var end = indiv.charCodeAt(currIndex+1);
+            
         if(arr.length == 0){
-            if(start < end){
-                while(start <= end){
-                    tmp.push(splits[0] + String.fromCharCode(start));
-                    start+=1;
-                }           
-            }
-            else{
-                while(start >= end){
-                    tmp.push(splits[0] + String.fromCharCode(start));
-                    start-=1;
-                }
-            }
-            splits.splice(0,2);
-            //recurse(tmp,splits.join(""));
-        }
-        else{
-            for(var i=0; i<arr.length; i++){
-                start = indiv.charCodeAt(0);
-                end = indiv.charCodeAt(2);
+            console.log("First time")
+            while(indiv.indexOf("-") != -1){
+
+                var currIndex = indiv.indexOf("-")
+                var start = indiv.charCodeAt(currIndex-1);
+                var end = indiv.charCodeAt(currIndex+1);
+
                 if(start < end){
                     while(start <= end){
-                        tmp.push(arr[i] + String.fromCharCode(start));
+                        tmp.push(splits[0] + String.fromCharCode(start));
                         start+=1;
                     }           
                 }
                 else{
                     while(start >= end){
-                        tmp.push(arr[i] + String.fromCharCode(start));
+                        tmp.push(splits[0] + String.fromCharCode(start));
                         start-=1;
                     }
                 }
-                
-                splits.splice(0,1);
                 //recurse(tmp,splits.join(""));
+                indiv = indiv.replace(indiv.substring(currIndex-1,currIndex+2),"");
+                //indiv = indiv.slice(3);
+            }
+            splits.splice(0,2);
+        }
+        else{
+            while(indiv.indexOf("-") != -1){
+
+            var currIndex = indiv.indexOf("-")
+            //var start = indiv.charCodeAt(currIndex-1);
+            //var end = indiv.charCodeAt(currIndex+1);
+
+                for(var i=0; i<arr.length; i++){
+                    start = indiv.charCodeAt(currIndex-1);
+                    end = indiv.charCodeAt(currIndex+1);
+                    
+                    if(start < end){
+                        while(start <= end){
+                            tmp.push(arr[i] + String.fromCharCode(start));
+                            start+=1;
+                            console.log(tmp)
+                        }           
+                    }
+                    else{
+                        while(start >= end){
+                            tmp.push(arr[i] + String.fromCharCode(start));
+                            start-=1;
+                        }
+                    }
+                    
+                    //splits.splice(0,1);
+                    //recurse(tmp,splits.join(""));
+                }
+                indiv = indiv.replace(indiv.substring(currIndex-1,currIndex+2),"");
+                //indiv = indiv.slice(3);
+            }
+            splits.splice(0,1);
+        }
+        console.log("Checking indiv")
+        console.log(indiv)
+        if(indiv.length != 0){
+            var leftover = indiv.split("");
+            for(var x=0; x<leftover.length; x++){
+                tmp.push(leftover[x]);
             }
         }
+        //indiv = indiv.slice(3);
+        //}
     }
     console.log("original: ");
     console.log(inside);
