@@ -127,7 +127,7 @@ function recurse(arr,inside){
                         while(start <= end){
                             tmp.push(arr[i] + String.fromCharCode(start));
                             start+=1;
-                            console.log(tmp)
+                            //console.log(tmp)
                         }           
                     }
                     else{
@@ -162,6 +162,12 @@ function recurse(arr,inside){
     console.log(tmp);
     console.log("still to process:");
     console.log(inside.substring(inside.indexOf("]")+1,inside.length));
+    if(inside.substring(inside.indexOf("]")+1,inside.length).charAt(0) != "[" && inside.substring(inside.indexOf("]")+1,inside.length).indexOf("[") != -1){
+        var extra = inside.substring(inside.indexOf("]")+1,inside.length).split("[")[0]
+        for(var y=0; y<tmp.length; y++){
+            tmp[y] = tmp[y] + extra;
+        }
+    }
     if(done){
         return recurse(tmp, "");
     }
