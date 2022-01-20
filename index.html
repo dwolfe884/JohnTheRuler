@@ -258,6 +258,11 @@ function parseRule(word,rule){
             }
             rule = rule.substring(3);
             rule = rule.substring(rule.indexOf("\"")+1);
+            if(skip){
+                rule = "";
+            }
+            console.log("checking rule:")
+            console.log(rule)
         }
     }
     if(!skip){
