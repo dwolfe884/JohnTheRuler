@@ -29,6 +29,8 @@ cAz"[0-9][0-9]"</textarea>
     <li>AN"STR" = insert at location N in the word (0 = start, z = end of string)</li>
     <li>[ = remove first character</li>
     <li>] = remove last character</li>
+    <li>r = reverse</li>
+    <li>f = reflect (passworddorwssap)</li>
 </ul>
 </html>
 <script>
@@ -165,6 +167,20 @@ function parseRule(word,rule){
         //Check for l = convert to lowercase
         if(rule.indexOf("l") == 0){
             word = word.toLowerCase();
+            rule = rule.substring(1);
+        }
+        //Check for r = reverse
+        if(rule.indexOf("r") == 0){
+            var tmp = word.split("");
+            tmp = tmp.reverse();
+            word = tmp.join("");
+            rule = rule.substring(1);
+        }
+        //Check for f = reflect
+        if(rule.indexOf("f") == 0){
+            var tmp = word.split("");
+            tmp = tmp.reverse();
+            word = word + tmp.join("");
             rule = rule.substring(1);
         }
         //Check for c = capitalize first letter
