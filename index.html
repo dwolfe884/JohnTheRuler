@@ -47,6 +47,8 @@ cAz"[0-9][0-9]"</textarea>
         <li>AN"STR" = insert at location N in the word (0 = start, z = end of string)</li>
         <li>[ = remove first character</li>
         <li>] = remove last character</li>
+        <li>{ = rotate left (jsmith = smithj)</li>
+        <li>} = rotate right (smithj = jsmith)</li>
         <li>r = reverse</li>
         <li>f = reflect (passworddorwssap)</li>
     </ul>
@@ -182,8 +184,21 @@ function parseRule(word,rule){
             rule = rule.substring(1);
             found = true;
         }
+        //Check for [ = delete last char
         if(rule.indexOf("]") == 0){
             word = word.slice(0, word.length-1);
+            rule = rule.substring(1);
+            found = true;
+        }
+        //Check for { = rotate left
+        if(rule.indexOf("{") == 0){
+            word = word.slice(1) + word.slice(0,1);
+            rule = rule.substring(1);
+            found = true;
+        }
+        //Check for } = rotate right
+            if(rule.indexOf("}") == 0){
+            word = word.slice(word.length-1) + word.slice(0,word.length-1);
             rule = rule.substring(1);
             found = true;
         }
