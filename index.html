@@ -145,6 +145,7 @@ function recurse(arr,inside){
 }
 
 function parseRule(word,rule){
+    var found = false;
     var skip = false;
     var finishedWords = [];
     if(rule == ""){
@@ -169,20 +170,24 @@ function parseRule(word,rule){
         if(rule.indexOf("u") == 0){
             word = word.toUpperCase();
             rule = rule.substring(1);
+            found = true;
         }
         //Check for [ = delete first char
         if(rule.indexOf("[") == 0){
             word = word.slice(1);
             rule = rule.substring(1);
+            found = true;
         }
         if(rule.indexOf("]") == 0){
             word = word.slice(0, word.length-1);
             rule = rule.substring(1);
+            found = true;
         }
         //Check for l = convert to lowercase
         if(rule.indexOf("l") == 0){
             word = word.toLowerCase();
             rule = rule.substring(1);
+            found = true;
         }
         //Check for r = reverse
         if(rule.indexOf("r") == 0){
@@ -190,6 +195,7 @@ function parseRule(word,rule){
             tmp = tmp.reverse();
             word = tmp.join("");
             rule = rule.substring(1);
+            found = true;
         }
         //Check for f = reflect
         if(rule.indexOf("f") == 0){
@@ -197,16 +203,19 @@ function parseRule(word,rule){
             tmp = tmp.reverse();
             word = word + tmp.join("");
             rule = rule.substring(1);
+            found = true;
         }
         //Check for c = capitalize first letter
         if(rule.indexOf("c") == 0){
             word = word.charAt(0).toUpperCase() + word.slice(1);
             rule = rule.substring(1);
+            found = true;
         }
         //Check for C = capitalize everything except first letter
         if(rule.indexOf("C") == 0){
             word = word.charAt(0).toLowerCase() + word.slice(1).toUpperCase();
             rule = rule.substring(1);
+            found = true;
         }
         //Check for t = toggle all cases
         if(rule.indexOf("t") == 0){
@@ -226,6 +235,7 @@ function parseRule(word,rule){
             word = newWord;
             console.log(word)
             rule = rule.substring(1);
+            found = true;
         }
         //Check for A = Append at specific 
         if(rule.indexOf("A") == 0){
@@ -278,6 +288,11 @@ function parseRule(word,rule){
             }
             console.log("checking rule:")
             console.log(rule)
+            found = true;
+        }
+        if(!found){
+            finishedWords.push("Error on character: " + rule.charAt(0));
+            return finishedWords;
         }
     }
     if(!skip){

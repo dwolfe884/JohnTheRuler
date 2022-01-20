@@ -1,5 +1,8 @@
+body{
+    background-color: #5D675B;
+}
 h2 {
-    color: navy;
+    color: #F78E69;
     margin-left: 20px;
 }
 .inline-div {
@@ -9,7 +12,9 @@ h2 {
 }
 .inline-txtarea {
     resize: none;
-    border : 2px solid red;
+    border : 2px solid #5D675B;
+    background-color: #F1BB87;
+    color: black;
     height:500px;
     width: 200px;
 }
