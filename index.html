@@ -282,6 +282,40 @@ function parseRule(word,rule){
             rule = rule.substring(1);
             found = true;
         }
+        //Check for TN = toggle the Nth character
+        if(rule.indexOf("T") == 0){
+            var response = ""
+            var where = rule.charAt(1)
+            if(where == "z"){
+                where = word.length-1;
+            }
+            if(isNaN(parseInt(where))){
+                finishedWords.push("Error after 'T'\n");
+                rule = "";
+                failed = true;
+            }
+            else{
+                response = word.substring(0,parseInt(where))
+
+                if(word.charAt(where).toLowerCase() == word.charAt(where)){
+                    response += word.charAt(where).toUpperCase();
+                }
+                else if(word.charAt(where).toUpperCase() == word.charAt(where)){
+                    response += word.charAt(where).toLowerCase();
+                }
+                else{
+                    response += word.charAt(where)
+                }
+                console.log("HERE1")
+                console.log(word)
+                console.log(word.substring(where+1))
+                word = response + word.substring(parseInt(where)+1);
+                console.log("HERE")
+                console.log(word)
+                rule = rule.substring(2);
+                found = true;
+            }
+        }
         //Check for A = Append at specific 
         if(rule.indexOf("A") == 0){
             var tmp = rule.indexOf("A");
