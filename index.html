@@ -5,6 +5,19 @@
 <link rel="stylesheet" href="main.css">
 </head>
 <div class="center-screen">
+    <div class="formPopup" id="popupForm" style="display: none">
+      <form action="/action_page.php" class="formContainer">
+        <h4>Copy and paste into /etc/john/john.conf</h4>
+        <textarea class="standout" rows="10" cols="20" id="exportWindow"></textarea>
+        <h4>Command to add rule:</h4>
+        <p class="standout" id="addrule"></p>
+        <h4>Command to run john with new rule:</h4>
+        <p class="standout" id="runjohn"></p>
+        <button type="button" class="btn cancel" onclick="closeTheForm()">Close</button>
+      </form>
+    </div>
+  </div>
+<div class="center-screen">
     <div class="inline-div">
     <h2>Input</h2>
     <textarea id="input" name="input" rows="20" cols="10" class="inline-txtarea">password
@@ -31,6 +44,8 @@ qwerty</textarea>
 u
 cf
 cAz"[A-B0-1][0-1]"</textarea>
+<br>
+    <button class="exportButton" onclick="openTheForm()"><u>Export Rule</u></button>
     </div>
     <div class="inline-div">
     <h2>Output</h2>
@@ -57,6 +72,18 @@ cAz"[A-B0-1][0-1]"</textarea>
 </div>
 </html>
 <script>
+
+function openTheForm() {
+  document.getElementById("popupForm").style.display = "block";
+  document.getElementById("exportWindow").value = document.getElementById("rule").value;
+  document.getElementById("addrule").innerText = "echo -e \"" + document.getElementById("rule").value.replaceAll("\n","\\n").replaceAll('"','\\"') +"\" >> /etc/john/john.conf";
+  document.getElementById("runjohn").innerText = "john -wordlist=./wordlist --rules=" + document.getElementById("rule").value.split("\n")[0].split(":")[1].split("]")[0];
+}
+
+function closeTheForm() {
+  document.getElementById("popupForm").style.display = "none";
+}
+
     var inlist = document.getElementById('input').value;
     //console.log(inlist)
     
